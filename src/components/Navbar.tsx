@@ -1,0 +1,166 @@
+import React from 'react';
+import { 
+  Hospital, 
+  MapPin, 
+  PhoneCall, 
+  FileText, 
+  Car, 
+  Languages, 
+  AlertCircle,
+  Clock,
+  Compass
+} from 'lucide-react';
+import { AppLanguage, UserLocation } from '../types';
+
+interface NavbarProps {
+  lang: AppLanguage;
+  onToggleLang: () => void;
+  userLocation: UserLocation;
+  onOpenLocationPicker: () => void;
+  onOpenPdfScraper: () => void;
+  onOpenTrafficInfo: () => void;
+  trafficLevel: 'low' | 'moderate' | 'heavy';
+  trafficDelayMin: number;
+}
+
+export const Navbar: React.FC<NavbarProps> = ({
+  lang,
+  onToggleLang,
+  userLocation,
+  onOpenLocationPicker,
+  onOpenPdfScraper,
+  onOpenTrafficInfo,
+  trafficLevel,
+  trafficDelayMin
+}) => {
+  const isEl = lang === 'el';
+
+  const trafficColor = 
+    trafficLevel === 'low' 
+      ? 'bg-emerald-500 text-emerald-950 border-emerald-300' 
+      : trafficLevel === 'moderate' 
+        ? 'bg-amber-400 text-amber-950 border-amber-300' 
+        : 'bg-rose-500 text-white border-rose-300';
+
+  const trafficLabel = 
+    trafficLevel === 'low' 
+      ? (isEl ? 'Ομαλή Κυκλοφορία' : 'Smooth Traffic') 
+      : trafficLevel === 'moderate' 
+        ? (isEl ? `Μέτρια Κίνηση (+${trafficDelayMin || 3}λ)` : `Moderate (+${trafficDelayMin || 3}m)`) 
+        : (isEl ? `Έντονη Κίνηση (+${trafficDelayMin || 8}λ)` : `Heavy Delay (+${trafficDelayMin || 8}m)`);
+
+  return (
+    <header className="sticky top-0 z-30 bg-slate-900 border-b border-slate-800 text-white shadow-md">
+      {/* Emergency Hotline Header Banner */}
+      <div className="bg-gradient-to-r from-red-600 via-rose-600 to-red-700 px-4 py-1.5 text-xs text-white flex items-center justify-between font-medium">
+        <div className="flex items-center gap-2">
+          <span className="flex h-2 w-2 relative">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
+          </span>
+          <span>
+            {isEl 
+              ? 'Επείγοντα Περιστατικά Ελλάδας: ' 
+              : 'Greece Medical Emergencies: '}
+          </span>
+          <a 
+            href="tel:166" 
+            className="font-bold underline hover:text-red-100 flex items-center gap-1 bg-red-800/60 px-2 py-0.5 rounded"
+          >
+            <PhoneCall className="w-3 h-3" />
+            166 (ΕΚΑΒ)
+          </a>
+          <span className="text-red-200">|</span>
+          <a 
+            href="tel:112" 
+            className="font-bold underline hover:text-red-100 bg-red-800/60 px-2 py-0.5 rounded"
+          >
+            112 (EU SOS)
+          </a>
+        </div>
+        <div className="hidden sm:flex items-center gap-2 text-red-100 text-xs">
+          <Clock className="w-3 h-3" />
+          <span>{isEl ? 'Νυχτερινές Εφημερίες σε Ισχύ' : 'Night On-Duty Rosters Active'}</span>
+        </div>
+      </div>
+
+      {/* Main Bar */}
+      <div className="max-w-7xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+        {/* Title / Brand */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center text-white shadow-md shadow-red-900/40 shrink-0">
+            <Hospital className="w-6 h-6" />
+          </div>
+          <div>
+            <h1 className="font-bold text-base sm:text-lg leading-tight tracking-tight flex items-center gap-2">
+              <span className="font-extrabold tracking-tight">MediFind</span>
+              <span className="text-xs text-slate-400 font-medium hidden md:inline">
+                {isEl ? '• Εφημερεύοντα Νοσοκομεία' : '• Night Hospitals Greece'}
+              </span>
+              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                {isEl ? 'Live Χάρτης' : 'Live Map'}
+              </span>
+            </h1>
+            <p className="text-xs text-slate-400 hidden sm:block">
+              {isEl 
+                ? 'Εύρεση πλησιέστερου νοσοκομείου τη νύχτα με δωρεάν OSRM διαδρομές & κίνηση' 
+                : 'Locate closest night emergency hospital with free OSM & OSRM routing'}
+            </p>
+          </div>
+        </div>
+
+        {/* Action Controls */}
+        <div className="flex items-center gap-2">
+          {/* User Location Badge */}
+          <button
+            id="location-picker-btn"
+            onClick={onOpenLocationPicker}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 border border-slate-700 transition"
+            title={isEl ? 'Αλλαγή τοποθεσίας χρήστη' : 'Change user location'}
+          >
+            <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+            <span className="max-w-[120px] sm:max-w-[160px] truncate font-medium">
+              {userLocation.label || (isEl ? 'Η τοποθεσία μου' : 'My location')}
+            </span>
+            <Compass className="w-3 h-3 text-slate-400 ml-0.5 shrink-0" />
+          </button>
+
+          {/* Traffic Monitor Status */}
+          <button
+            id="traffic-info-btn"
+            onClick={onOpenTrafficInfo}
+            className={`hidden md:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border ${trafficColor} transition`}
+            title={isEl ? 'Πληροφορίες πραγματικού χρόνου κίνησης' : 'Real-time traffic status'}
+          >
+            <Car className="w-3.5 h-3.5" />
+            <span>{trafficLabel}</span>
+          </button>
+
+          {/* Official PDF Document Scraper */}
+          <button
+            id="pdf-scraper-btn"
+            onClick={onOpenPdfScraper}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white shadow-sm transition"
+            title={isEl ? 'Εισαγωγή & Ανάλυση Επίσημου PDF Εφημεριών' : 'Scrape & Normalize Official PDF Schedule'}
+          >
+            <FileText className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">
+              {isEl ? 'Εισαγωγή PDF' : 'Import PDF'}
+            </span>
+          </button>
+
+          {/* Language Switch */}
+          <button
+            id="lang-toggle-btn"
+            onClick={onToggleLang}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 border border-slate-700 font-bold transition"
+            title={isEl ? 'Αλλαγή σε Αγγλικά' : 'Switch to Greek'}
+          >
+            <Languages className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEl ? 'EN' : 'ΕΛ'}</span>
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+};
