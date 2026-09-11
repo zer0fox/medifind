@@ -4,6 +4,9 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import { INITIAL_HOSPITALS } from './src/data/hospitalsData';
+import { recordVisit, recordHeartbeat, getAnalyticsSummary } from './src/server/analyticsService';
+import { antiBotMiddleware } from './src/server/antiBotMiddleware';
+import fs from 'fs';
 
 dotenv.config();
 
@@ -12,6 +15,31 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 3000;
+
+// Anti-bot & scraper protection: blocks automated crawlers, scrapers, and AI bots
+app.use(antiBotMiddleware);
+
+// Serve robots.txt directly
+app.get('/robots.txt', (req, res) => {
+  res.type('text/plain');
+  const robotsPath = path.join(process.cwd(), 'public', 'robots.txt');
+  if (fs.existsSync(robotsPath)) {
+    res.sendFile(robotsPath);
+  } else {
+    res.send('User-agent: *\nDisallow: /api/\n');
+  }
+});
+
+// Serve sitemap.xml directly
+app.get('/sitemap.xml', (req, res) => {
+  res.type('application/xml');
+  const sitemapPath = path.join(process.cwd(), 'public', 'sitemap.xml');
+  if (fs.existsSync(sitemapPath)) {
+    res.sendFile(sitemapPath);
+  } else {
+    res.status(404).send('Sitemap not found');
+  }
+});
 
 // Increase body parser limit to support PDF uploads
 app.use(express.json({ limit: '20mb' }));
@@ -23,6 +51,45 @@ let runtimeHospitals = [...INITIAL_HOSPITALS];
 // Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', hospitalsCount: runtimeHospitals.length, timestamp: new Date().toISOString() });
+});
+
+// Analytics: Record Pageview or Event
+app.post('/api/analytics/track', (req, res) => {
+  try {
+    const ip = req.headers['x-forwarded-for']?.toString().split(',')[0] || req.socket.remoteAddress || '127.0.0.1';
+    const userAgent = req.headers['user-agent'] || '';
+    const result = recordVisit({
+      ...req.body,
+      ip,
+      userAgent: req.body.userAgent || userAgent
+    });
+    res.json(result);
+  } catch (err: any) {
+    console.error('Analytics track error:', err);
+    res.status(500).json({ error: 'Failed to record analytics event' });
+  }
+});
+
+// Analytics: Live Heartbeat
+app.post('/api/analytics/heartbeat', (req, res) => {
+  try {
+    const { sessionId } = req.body;
+    recordHeartbeat(sessionId);
+    res.json({ success: true });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Heartbeat error' });
+  }
+});
+
+// Analytics: Get Stats Summary
+app.get('/api/analytics/stats', (req, res) => {
+  try {
+    const stats = getAnalyticsSummary();
+    res.json(stats);
+  } catch (err: any) {
+    console.error('Analytics stats error:', err);
+    res.status(500).json({ error: 'Failed to load analytics stats' });
+  }
 });
 
 // GET all hospitals

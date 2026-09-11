@@ -8,7 +8,8 @@ import {
   Languages, 
   AlertCircle,
   Clock,
-  Compass
+  Compass,
+  BarChart3
 } from 'lucide-react';
 import { AppLanguage, UserLocation } from '../types';
 
@@ -19,6 +20,7 @@ interface NavbarProps {
   onOpenLocationPicker: () => void;
   onOpenPdfScraper: () => void;
   onOpenTrafficInfo: () => void;
+  onOpenTrafficAnalytics: () => void;
   trafficLevel: 'low' | 'moderate' | 'heavy';
   trafficDelayMin: number;
 }
@@ -30,6 +32,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenLocationPicker,
   onOpenPdfScraper,
   onOpenTrafficInfo,
+  onOpenTrafficAnalytics,
   trafficLevel,
   trafficDelayMin
 }) => {
@@ -147,6 +150,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             <span className="hidden sm:inline">
               {isEl ? 'Εισαγωγή PDF' : 'Import PDF'}
             </span>
+          </button>
+
+          {/* Website Traffic & Analytics Tracker */}
+          <button
+            id="traffic-analytics-btn"
+            onClick={onOpenTrafficAnalytics}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-emerald-950/40 hover:bg-emerald-900/50 text-emerald-300 border border-emerald-500/30 text-xs font-semibold shadow-xs transition"
+            title={isEl ? 'Στατιστικά Επισκεψιμότητας Ιστοσελίδας' : 'Website Traffic & Visitor Analytics'}
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <BarChart3 className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="hidden lg:inline">{isEl ? 'Επισκεψιμότητα' : 'Traffic'}</span>
           </button>
 
           {/* Language Switch */}

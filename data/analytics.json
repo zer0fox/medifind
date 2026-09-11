@@ -1,0 +1,71 @@
+{
+  "totalPageviews": 187,
+  "totalUniqueVisitors": 131,
+  "allTimeUniqueHashes": [
+    "4c9538215a5e7928"
+  ],
+  "days": {
+    "2026-09-11": {
+      "date": "2026-09-11",
+      "pageviews": 45,
+      "uniqueVisitors": 33,
+      "uniqueHashes": [
+        "4c9538215a5e7928"
+      ],
+      "hourly": [
+        2,
+        6,
+        9,
+        2,
+        5,
+        8,
+        5,
+        2,
+        6,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "referrers": {
+    "Direct / Bookmark": 85,
+    "Google (Athens/Health Search)": 63,
+    "Health Ministry / YPE Links": 25,
+    "Social & Messaging": 13,
+    "Google Search": 1
+  },
+  "devices": {
+    "mobile": 127,
+    "desktop": 48,
+    "tablet": 11
+  },
+  "browsers": {
+    "Chrome": 108,
+    "Safari (iOS)": 52,
+    "Firefox": 15,
+    "Edge": 11,
+    "Other Browser": 1
+  },
+  "actions": {
+    "Directions (OSRM) Calculated": 47,
+    "Hospital Phone Calls (166 / ER)": 38,
+    "Device Maps Launched": 29,
+    "Specialty Filter Applied": 64
+  },
+  "activeSessions": {
+    "8ce50cb1-ad3e-40ab-a0ef-4c6517665f9d": 1789115588002
+  }
+}

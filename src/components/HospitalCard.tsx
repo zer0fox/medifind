@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { SPECIALTIES } from '../data/hospitalsData';
 import { getHospitalMapLinks } from '../utils/mapNavigation';
+import { trackEvent } from '../services/analytics';
 
 interface HospitalCardProps {
   hospital: Hospital;
@@ -173,7 +174,10 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
         {/* Direct Call Hospital */}
         <a
           href={`tel:${hospital.phoneEmergency}`}
-          onClick={(e) => e.stopPropagation()}
+          onClick={(e) => {
+            e.stopPropagation();
+            trackEvent('Hospital Phone Calls (166 / ER)', { hospital: hospital.name.en });
+          }}
           className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold transition active:scale-95"
           title={isEl ? 'Κλήση Επειγόντων' : 'Call Emergency'}
         >
@@ -188,7 +192,13 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
             href={mapLinks.defaultDeviceUrl}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              trackEvent('Device Maps Launched', {
+                hospital: hospital.name.en,
+                provider: mapLinks.defaultDeviceName
+              });
+            }}
             className="flex items-center gap-1 px-2.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 text-xs font-semibold border border-sky-200 transition"
             title={`${isEl ? 'Άνοιγμα στους Χάρτες της Συσκευής' : 'Open in Default Device Maps'} (${mapLinks.defaultDeviceName})`}
           >

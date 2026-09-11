@@ -1,6 +1,10 @@
 {
   "name": "MediFind",
   "description": "Locate on-duty hospitals open at night across Greece with live routing, distance calculation, doctor specialty filters, and official schedule database.",
-  "requestFramePermissions": ["geolocation"],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "requestFramePermissions": [
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

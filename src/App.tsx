@@ -24,6 +24,8 @@ import { ActiveRoutePanel } from './components/ActiveRoutePanel';
 import { PdfScraperModal } from './components/PdfScraperModal';
 import { LocationPickerModal } from './components/LocationPickerModal';
 import { TrafficInfoModal } from './components/TrafficInfoModal';
+import { TrafficAnalyticsModal } from './components/TrafficAnalyticsModal';
+import { initAnalytics, trackEvent } from './services/analytics';
 
 import { 
   Map as MapIcon, 
@@ -49,6 +51,7 @@ export default function App() {
   const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [isTrafficModalOpen, setIsTrafficModalOpen] = useState(false);
+  const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
 
   // Filters State
   const [filters, setFilters] = useState<FilterState>({
@@ -63,6 +66,14 @@ export default function App() {
 
   const trafficInfo = getTrafficConditions();
   const isEl = lang === 'el';
+
+  // Initialize free traffic and analytics tracking on website mount
+  useEffect(() => {
+    const cleanup = initAnalytics();
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, []);
 
   // Fetch backend hospitals on mount if available
   useEffect(() => {
@@ -211,6 +222,12 @@ export default function App() {
         );
         setActiveRoute(routeData);
 
+        // Track route calculation event
+        trackEvent('Directions (OSRM) Calculated', {
+          hospital: hospital.name.en,
+          distanceKm: routeData.distanceKm
+        });
+
         // On mobile, automatically show the map with the active route
         if (window.innerWidth < 1024) {
           setMobileView('map');
@@ -258,6 +275,7 @@ export default function App() {
         onOpenLocationPicker={() => setIsLocationModalOpen(true)}
         onOpenPdfScraper={() => setIsPdfModalOpen(true)}
         onOpenTrafficInfo={() => setIsTrafficModalOpen(true)}
+        onOpenTrafficAnalytics={() => setIsAnalyticsModalOpen(true)}
         trafficLevel={trafficInfo.level}
         trafficDelayMin={trafficInfo.delayFactorMinPer10Km}
       />
@@ -439,6 +457,12 @@ export default function App() {
       <TrafficInfoModal
         isOpen={isTrafficModalOpen}
         onClose={() => setIsTrafficModalOpen(false)}
+        lang={lang}
+      />
+
+      <TrafficAnalyticsModal
+        isOpen={isAnalyticsModalOpen}
+        onClose={() => setIsAnalyticsModalOpen(false)}
         lang={lang}
       />
     </div>
