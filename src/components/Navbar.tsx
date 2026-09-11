@@ -9,9 +9,11 @@ import {
   AlertCircle,
   Clock,
   Compass,
-  BarChart3
+  BarChart3,
+  Building2
 } from 'lucide-react';
 import { AppLanguage, UserLocation } from '../types';
+import { GovSyncMeta } from './GovSyncModal';
 
 interface NavbarProps {
   lang: AppLanguage;
@@ -21,6 +23,8 @@ interface NavbarProps {
   onOpenPdfScraper: () => void;
   onOpenTrafficInfo: () => void;
   onOpenTrafficAnalytics: () => void;
+  onOpenGovSync?: () => void;
+  syncMeta?: GovSyncMeta | null;
   trafficLevel: 'low' | 'moderate' | 'heavy';
   trafficDelayMin: number;
 }
@@ -33,6 +37,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenPdfScraper,
   onOpenTrafficInfo,
   onOpenTrafficAnalytics,
+  onOpenGovSync,
+  syncMeta,
   trafficLevel,
   trafficDelayMin
 }) => {
@@ -138,6 +144,22 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Car className="w-3.5 h-3.5" />
             <span>{trafficLabel}</span>
           </button>
+
+          {/* Government Live Sync Badge */}
+          {onOpenGovSync && (
+            <button
+              id="gov-sync-btn"
+              onClick={onOpenGovSync}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-blue-950/40 hover:bg-blue-900/50 text-blue-300 border border-blue-500/30 text-xs font-semibold shadow-xs transition"
+              title={isEl ? 'Επίσημος συγχρονισμός εφημεριών από moh.gov.gr' : 'Official duty roster sync from moh.gov.gr'}
+            >
+              <Building2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+              <span className="hidden sm:inline">
+                moh.gov.gr {syncMeta?.dutyGroup ? `(${syncMeta.dutyGroup.replace('Ομάδα ', 'Ομ. ')})` : ''}
+              </span>
+              <span className="sm:hidden">MOH</span>
+            </button>
+          )}
 
           {/* Official PDF Document Scraper */}
           <button

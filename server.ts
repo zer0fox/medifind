@@ -6,6 +6,7 @@ import { GoogleGenAI } from '@google/genai';
 import { INITIAL_HOSPITALS } from './src/data/hospitalsData';
 import { recordVisit, recordHeartbeat, getAnalyticsSummary } from './src/server/analyticsService';
 import { antiBotMiddleware } from './src/server/antiBotMiddleware';
+import { syncHospitalsFromGovIfNeeded, getLastSyncMetadata, getAthensDateString } from './src/server/govScraperService';
 import fs from 'fs';
 
 dotenv.config();
@@ -92,9 +93,57 @@ app.get('/api/analytics/stats', (req, res) => {
   }
 });
 
-// GET all hospitals
-app.get('/api/hospitals', (req, res) => {
-  res.json({ hospitals: runtimeHospitals, count: runtimeHospitals.length });
+// GET all hospitals with lazy date-change sync from official moh.gov.gr
+app.get('/api/hospitals', async (req, res) => {
+  try {
+    const { hospitals, meta, newlyScraped } = await syncHospitalsFromGovIfNeeded(runtimeHospitals, false);
+    runtimeHospitals = hospitals;
+    res.json({
+      hospitals: runtimeHospitals,
+      count: runtimeHospitals.length,
+      meta,
+      newlyScraped
+    });
+  } catch (err: any) {
+    console.error('Error fetching hospitals with gov sync:', err);
+    res.json({
+      hospitals: runtimeHospitals,
+      count: runtimeHospitals.length,
+      meta: getLastSyncMetadata() || {
+        date: getAthensDateString(),
+        status: 'fallback',
+        dutyGroup: 'Ομάδα Β',
+        message: 'Εξυπηρέτηση από τοπική βάση'
+      },
+      newlyScraped: false
+    });
+  }
+});
+
+// Force sync from moh.gov.gr on demand
+app.post('/api/hospitals/sync-gov', async (req, res) => {
+  try {
+    const { hospitals, meta } = await syncHospitalsFromGovIfNeeded(runtimeHospitals, true);
+    runtimeHospitals = hospitals;
+    res.json({
+      success: true,
+      meta,
+      count: runtimeHospitals.length
+    });
+  } catch (err: any) {
+    console.error('Manual sync-gov failed:', err);
+    res.status(500).json({ error: 'Manual sync failed', details: err.message });
+  }
+});
+
+// GET current gov synchronization status
+app.get('/api/hospitals/sync-status', (req, res) => {
+  const meta = getLastSyncMetadata();
+  res.json({
+    status: meta ? meta.status : 'pending',
+    currentAthensDate: getAthensDateString(),
+    lastSync: meta
+  });
 });
 
 // POST to reset or seed hospitals

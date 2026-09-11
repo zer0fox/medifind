@@ -25,6 +25,7 @@ import { PdfScraperModal } from './components/PdfScraperModal';
 import { LocationPickerModal } from './components/LocationPickerModal';
 import { TrafficInfoModal } from './components/TrafficInfoModal';
 import { TrafficAnalyticsModal } from './components/TrafficAnalyticsModal';
+import { GovSyncModal, GovSyncMeta } from './components/GovSyncModal';
 import { initAnalytics, trackEvent } from './services/analytics';
 
 import { 
@@ -52,6 +53,8 @@ export default function App() {
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
   const [isTrafficModalOpen, setIsTrafficModalOpen] = useState(false);
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
+  const [isGovModalOpen, setIsGovModalOpen] = useState(false);
+  const [syncMeta, setSyncMeta] = useState<GovSyncMeta | null>(null);
 
   // Filters State
   const [filters, setFilters] = useState<FilterState>({
@@ -75,13 +78,16 @@ export default function App() {
     };
   }, []);
 
-  // Fetch backend hospitals on mount if available
+  // Fetch backend hospitals on mount (with lazy date-change sync from moh.gov.gr)
   useEffect(() => {
     fetch('/api/hospitals')
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
         if (data && data.hospitals && data.hospitals.length > 0) {
           setHospitals(data.hospitals);
+        }
+        if (data && data.meta) {
+          setSyncMeta(data.meta);
         }
       })
       .catch((err) => {
@@ -276,6 +282,8 @@ export default function App() {
         onOpenPdfScraper={() => setIsPdfModalOpen(true)}
         onOpenTrafficInfo={() => setIsTrafficModalOpen(true)}
         onOpenTrafficAnalytics={() => setIsAnalyticsModalOpen(true)}
+        onOpenGovSync={() => setIsGovModalOpen(true)}
+        syncMeta={syncMeta}
         trafficLevel={trafficInfo.level}
         trafficDelayMin={trafficInfo.delayFactorMinPer10Km}
       />
@@ -329,6 +337,33 @@ export default function App() {
             mobileView === 'map' ? 'hidden lg:flex' : 'flex'
           }`}
         >
+          {/* Official Greek Ministry of Health Sync Indicator Banner */}
+          {syncMeta && (
+            <button
+              id="moh-sync-banner"
+              onClick={() => setIsGovModalOpen(true)}
+              className="w-full text-left px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100/90 border border-blue-200 text-blue-950 text-xs flex items-center justify-between transition group shadow-2xs"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <span className="relative flex h-2 w-2 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <span className="font-bold text-blue-900 truncate">
+                  {isEl 
+                    ? `Εφημερία: ${syncMeta.dutyGroup} (Αττική)` 
+                    : `Active Duty: ${syncMeta.dutyGroup} (Attica)`}
+                </span>
+                <span className="text-[11px] text-blue-600 hidden sm:inline">
+                  • {syncMeta.status === 'synced' ? 'moh.gov.gr' : 'ΕΣΥ Cycle'}
+                </span>
+              </div>
+              <span className="text-[11px] font-semibold text-blue-700 group-hover:text-blue-800 shrink-0 ml-2">
+                {isEl ? 'Πληροφορίες →' : 'Details →'}
+              </span>
+            </button>
+          )}
+
           {/* Active Navigation Route Step-by-Step Guidance */}
           {activeRoute && selectedHospital && (
             <ActiveRoutePanel
@@ -464,6 +499,17 @@ export default function App() {
         isOpen={isAnalyticsModalOpen}
         onClose={() => setIsAnalyticsModalOpen(false)}
         lang={lang}
+      />
+
+      <GovSyncModal
+        isOpen={isGovModalOpen}
+        onClose={() => setIsGovModalOpen(false)}
+        lang={lang}
+        syncMeta={syncMeta}
+        onHospitalsUpdated={(newHospitals, meta) => {
+          setHospitals(newHospitals);
+          setSyncMeta(meta);
+        }}
       />
     </div>
   );
