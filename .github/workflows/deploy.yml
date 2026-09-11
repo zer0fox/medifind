@@ -2,10 +2,9 @@ name: Deploy React App to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main"] # Change to "master" if your main branch is called master
   workflow_dispatch:
 
-# Grant permissions required for GitHub Pages deployments
 permissions:
   contents: read
   pages: write
@@ -20,26 +19,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6 # Updated to v6 (Node 24 native)
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6 # Updated to v6 (Node 24 native)
         with:
-          node-version: 20
-          cache: 'npm'
+          node-version: 22
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Build Production Bundle
+      - name: Build Project
         run: npm run build
 
-      - name: Upload Static Build Artifacts
+      - name: Upload Static Artifacts
         uses: actions/upload-pages-artifact@v3
         with:
-          # If your project uses Vite, build path is './dist'. 
-          # If using Create React App, change this to './build'.
-          path: './dist' 
+          path: './dist' # Use './build' if using Create React App instead of Vite
 
   deploy:
     environment:
