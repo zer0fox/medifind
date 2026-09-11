@@ -10,7 +10,8 @@ import {
   Clock,
   Compass,
   BarChart3,
-  Building2
+  Building2,
+  Lock
 } from 'lucide-react';
 import { AppLanguage, UserLocation } from '../types';
 import { GovSyncMeta } from './GovSyncModal';
@@ -27,6 +28,7 @@ interface NavbarProps {
   syncMeta?: GovSyncMeta | null;
   trafficLevel: 'low' | 'moderate' | 'heavy';
   trafficDelayMin: number;
+  onLockApp?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -40,7 +42,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   onOpenGovSync,
   syncMeta,
   trafficLevel,
-  trafficDelayMin
+  trafficDelayMin,
+  onLockApp
 }) => {
   const isEl = lang === 'el';
 
@@ -199,6 +202,18 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Languages className="w-3.5 h-3.5 text-amber-400" />
             <span>{isEl ? 'EN' : 'ΕΛ'}</span>
           </button>
+
+          {/* Lock App / Session Reset */}
+          {onLockApp && (
+            <button
+              id="lock-app-btn"
+              onClick={onLockApp}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-amber-300 border border-slate-700 transition"
+              title={isEl ? 'Κλείδωμα συνεδρίας (Επαναφορά κωδικού)' : 'Lock app session (Reset password)'}
+            >
+              <Lock className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
     </header>

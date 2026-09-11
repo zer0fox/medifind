@@ -26,6 +26,7 @@ import { LocationPickerModal } from './components/LocationPickerModal';
 import { TrafficInfoModal } from './components/TrafficInfoModal';
 import { TrafficAnalyticsModal } from './components/TrafficAnalyticsModal';
 import { GovSyncModal, GovSyncMeta } from './components/GovSyncModal';
+import { PasswordGate } from './components/PasswordGate';
 import { initAnalytics, trackEvent } from './services/analytics';
 
 import { 
@@ -55,6 +56,24 @@ export default function App() {
   const [isAnalyticsModalOpen, setIsAnalyticsModalOpen] = useState(false);
   const [isGovModalOpen, setIsGovModalOpen] = useState(false);
   const [syncMeta, setSyncMeta] = useState<GovSyncMeta | null>(null);
+
+  // Device password gate persistence ('demo123')
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('medifind_auth') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const handleLockApp = () => {
+    try {
+      localStorage.removeItem('medifind_auth');
+    } catch (e) {
+      console.warn('Could not clear auth in localStorage', e);
+    }
+    setIsAuthenticated(false);
+  };
 
   // Filters State
   const [filters, setFilters] = useState<FilterState>({
@@ -271,6 +290,11 @@ export default function App() {
     return hospitals.filter((h) => h.isOnDutyTonight).length;
   }, [hospitals]);
 
+  // First-time visitor password gate
+  if (!isAuthenticated) {
+    return <PasswordGate onUnlock={() => setIsAuthenticated(true)} lang={lang} />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col font-sans text-slate-900">
       {/* Navbar */}
@@ -286,6 +310,7 @@ export default function App() {
         syncMeta={syncMeta}
         trafficLevel={trafficInfo.level}
         trafficDelayMin={trafficInfo.delayFactorMinPer10Km}
+        onLockApp={handleLockApp}
       />
 
       {/* Filter and Search Bar */}
