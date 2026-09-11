@@ -53,7 +53,7 @@ export const ActiveRoutePanel: React.FC<ActiveRoutePanelProps> = ({
               <span className="relative inline-flex rounded-full h-2 w-2 bg-sky-500"></span>
             </span>
             <span className="text-[11px] font-bold uppercase tracking-wider text-sky-400">
-              {isEl ? 'Ενεργή Πλοήγηση OSRM' : 'Active OSRM Navigation'}
+              {isEl ? 'Ενεργή Πλοήγηση' : 'Active Navigation'}
             </span>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${trafficBadge.bg}`}>
               {trafficBadge.text}
@@ -64,6 +64,12 @@ export const ActiveRoutePanel: React.FC<ActiveRoutePanelProps> = ({
           </h3>
           <p className="text-xs text-slate-400 mt-0.5">
             {hospital.address[lang]}, {hospital.city[lang]}
+          </p>
+          <p className="text-[11px] text-sky-300/80 mt-1 flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-400"></span>
+            {isEl 
+              ? 'Η εφαρμογή σας καθοδηγεί απευθείας — δεν απαιτείται το Google Maps.' 
+              : 'The app navigates you directly — no need to use Google Maps.'}
           </p>
         </div>
 
@@ -113,7 +119,7 @@ export const ActiveRoutePanel: React.FC<ActiveRoutePanelProps> = ({
       {/* Turn-by-Turn Steps Preview */}
       <div className="py-2.5 max-h-40 overflow-y-auto pr-1 space-y-2 text-xs">
         <div className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
-          {isEl ? 'Οδηγίες Διαδρομής (OSRM Turn-by-Turn)' : 'Driving Directions'}
+          {isEl ? 'Οδηγίες Διαδρομής Βήμα-προς-Βήμα' : 'Turn-by-Turn Driving Directions'}
         </div>
         {route.steps.slice(0, 5).map((step, idx) => (
           <div key={idx} className="flex items-start gap-2 text-slate-300 bg-slate-800/40 p-1.5 rounded-lg">

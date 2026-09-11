@@ -43,10 +43,10 @@ export const TrafficInfoModal: React.FC<TrafficInfoModalProps> = ({
           </div>
           <div>
             <h2 className="text-lg font-bold text-slate-900 leading-tight">
-              {isEl ? 'Πραγματικός Χρόνος Κίνησης & OSRM' : 'Real-Time Traffic & OSRM Routing'}
+              {isEl ? 'Πραγματικός Χρόνος Κίνησης & Πλοήγηση' : 'Real-Time Traffic & Live Navigation'}
             </h2>
             <p className="text-xs text-slate-500">
-              {isEl ? 'Υπολογισμός ταχύτερης πρόσβασης χωρίς κόστος API' : 'Zero-cost routing & dynamic traffic delay engine'}
+              {isEl ? 'Άμεση πλοήγηση στην εφαρμογή με δυναμικό υπολογισμό καθυστερήσεων' : 'Direct in-app route navigation with dynamic delay calculation'}
             </p>
           </div>
         </div>
@@ -91,12 +91,12 @@ export const TrafficInfoModal: React.FC<TrafficInfoModalProps> = ({
             <Navigation className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
             <div>
               <strong className="text-slate-800 block">
-                {isEl ? '100% Δωρεάν & Ανοικτά Δεδομένα' : '100% Free & Open-Source'}
+                {isEl ? 'Αυτόνομη Πλοήγηση στην Εφαρμογή' : 'Self-Contained In-App Navigation'}
               </strong>
               <span>
                 {isEl
-                  ? 'Χρησιμοποιούμε OpenStreetMap και τη μηχανή OSRM (Open Source Routing Machine). Δεν απαιτούνται συνδρομές ή επί πληρωμή API.'
-                  : 'Powered by OpenStreetMap and the OSRM routing engine. No paid APIs or subscription keys.'}
+                  ? 'Η εφαρμογή υπολογίζει τη διαδρομή και σας καθοδηγεί απευθείας στον χάρτη. Δεν χρειάζεται να χρησιμοποιήσετε το Google Maps, εκτός αν το επιλέξετε.'
+                  : 'The app calculates turn-by-turn routes and navigates you directly on the map. You do not need to open Google Maps unless you choose to.'}
               </span>
             </div>
           </div>

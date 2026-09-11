@@ -222,8 +222,8 @@ export default function App() {
         );
         setActiveRoute(routeData);
 
-        // Track route calculation event
-        trackEvent('Directions (OSRM) Calculated', {
+        // Track navigation calculation event
+        trackEvent('In-App Navigation Started', {
           hospital: hospital.name.en,
           distanceKm: routeData.distanceKm
         });

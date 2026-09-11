@@ -263,13 +263,14 @@ export const HospitalMap: React.FC<HospitalMapProps> = ({
               </a>
             </div>
 
-            <!-- In-App OSRM Option -->
+            <!-- Direct In-App Navigation Option -->
             <button
               type="button"
               data-in-app-route="${hosp.id}"
               class="w-full mt-1 py-1.5 px-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-bold flex items-center justify-center gap-1 transition"
+              title="${isEl ? 'Άμεση πλοήγηση στην εφαρμογή — δεν απαιτείται το Google Maps' : 'Direct in-app navigation — no need to open Google Maps'}"
             >
-              <span>🧭 ${isEl ? 'Προβολή Διαδρομής Εδώ' : 'Show Route In-App'}</span>
+              <span>🧭 ${isEl ? 'Πλοήγηση στην Εφαρμογή' : 'In-App Navigation'}</span>
             </button>
           </div>
         </div>
@@ -418,7 +419,7 @@ export const HospitalMap: React.FC<HospitalMapProps> = ({
           </span>
         </div>
         <span className="text-[10px] text-slate-400 hidden sm:inline">
-          OpenStreetMap &bull; OSRM Free
+          OpenStreetMap &bull; Live Navigation
         </span>
       </div>
 
@@ -428,7 +429,7 @@ export const HospitalMap: React.FC<HospitalMapProps> = ({
           <div className="bg-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3 border border-slate-200">
             <div className="w-5 h-5 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin"></div>
             <span className="text-xs font-semibold text-slate-800">
-              {isEl ? 'Υπολογισμός ταχύτερης διαδρομής OSRM...' : 'Calculating quickest OSRM route...'}
+              {isEl ? 'Υπολογισμός ταχύτερης διαδρομής...' : 'Calculating quickest route...'}
             </span>
           </div>
         </div>

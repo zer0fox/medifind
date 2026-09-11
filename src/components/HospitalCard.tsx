@@ -207,7 +207,7 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
             <ExternalLink className="w-3 h-3 text-sky-500 sm:hidden" />
           </a>
 
-          {/* Quickest Route Button (OSRM on Leaflet Map) */}
+          {/* Direct In-App Navigation */}
           <button
             id={`route-btn-${hospital.id}`}
             onClick={(e) => {
@@ -215,9 +215,10 @@ export const HospitalCard: React.FC<HospitalCardProps> = ({
               onRequestRoute();
             }}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-xs transition active:scale-95"
+            title={isEl ? 'Άμεση πλοήγηση στην εφαρμογή — δεν χρειάζεται να ανοίξετε το Google Maps' : 'Direct in-app navigation — no need to use Google Maps'}
           >
             <Navigation className="w-3.5 h-3.5 text-sky-400" />
-            <span>{isEl ? 'Διαδρομή OSRM' : 'OSRM Route'}</span>
+            <span>{isEl ? 'Πλοήγηση' : 'Navigation'}</span>
           </button>
         </div>
       </div>

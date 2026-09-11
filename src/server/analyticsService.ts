@@ -115,7 +115,7 @@ function seedInitialStats() {
       'Edge': Math.round((todayViews + 142) * 0.06)
     },
     actions: {
-      'Directions (OSRM) Calculated': 47,
+      'In-App Navigation Started': 47,
       'Hospital Phone Calls (166 / ER)': 38,
       'Device Maps Launched': 29,
       'Specialty Filter Applied': 64

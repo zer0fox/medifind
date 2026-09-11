@@ -106,8 +106,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             </h1>
             <p className="text-xs text-slate-400 hidden sm:block">
               {isEl 
-                ? 'Εύρεση πλησιέστερου νοσοκομείου τη νύχτα με δωρεάν OSRM διαδρομές & κίνηση' 
-                : 'Locate closest night emergency hospital with free OSM & OSRM routing'}
+                ? 'Εύρεση πλησιέστερου εφημερεύοντος νοσοκομείου με ζωντανή πλοήγηση & κίνηση' 
+                : 'Locate closest night emergency hospital with live navigation & traffic'}
             </p>
           </div>
         </div>
